@@ -1,0 +1,17 @@
+fastapi
+uvicorn
+langchain
+langchain-core
+langchain-community
+langchain-huggingface
+langchain-groq ==0.1.0
+chromadb
+sentence-transformers
+pydantic
+python-dotenv
+sqlite-utils
+huggingface-hub
+torch
+transformers
+pydantic
+pydantic-settings
