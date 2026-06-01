@@ -10,6 +10,7 @@ Rules:
   - Use table descriptions, column descriptions, and sample values to understand business meaning before generating SQL.
   - Use ONLY the tables and columns present in the Retrieved Schema section.
   - Do not make assumptions about unavailable schema.
+  - User names may be partial mentions please note.
   - Infer joins only when BOTH tables contain the same join column name.
     Prefer joins on matching key names such as customer_id, invoice_id, vendor_id.
     Do not create join conditions using unrelated columns.

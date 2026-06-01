@@ -96,10 +96,16 @@ class SQLExecutor:
         cols = []
         for col in select_part.split(","):
             col = col.strip()
+            # Remove leading/trailing parentheses
+            col = col.strip("()")
+            if str(col).isdigit() or not col:
+                continue
             if "." in col:
                 col = col.split(".")[-1]
             if " AS " in col.upper():
                 col = col.split()[0]
+            # Remove any remaining parentheses or complex expressions
+            col = col.strip("()")
             cols.append(col)
         return cols
 
@@ -110,6 +116,8 @@ class SQLExecutor:
         for cols in self.schema_map.values():
             valid_columns.update(cols)
         for col in columns:
+            if str(col).isdigit() or not col:
+                continue
             if col == "*":
                 continue
             if "(" in col:
@@ -126,6 +134,7 @@ class SQLExecutor:
         }
 
     def _validator(self,query):
+        logger.info("Query_sent for validation is : %s",query)
         query_upper = query.upper().strip()
         
         unsupport_check = any(cmd in query_upper for cmd in Unsupport_cmd)
@@ -138,13 +147,15 @@ class SQLExecutor:
         
         try:
             sql_instance = sqlglot.parse_one(query,read="sqlite")
-            logger.info("Query sucessfully executed")
+            
             if not isinstance(sql_instance,(sqlglot.exp.Select,sqlglot.exp.Subquery)):
+                logger.info("Query Failed at instance")
                 return {
                     "status":"failed",
                     "reason":"Dangerous execution node found",
                     "details":"please review query some modify code block has been observed"
                 }    
+            logger.info("Query sucessfully executed")
         except Exception as e:
             return {
                 "status":"failed",
@@ -272,6 +283,21 @@ json_data = {
 
 if __name__=="__main__":
     with SQLExecutor() as sql:
-        data = sql.execute_query("SELECT * FROM invoices WHERE status = 'unpaid' AND invoice_amount > 500000;")
+        data = sql.execute_query("""SELECT
+    i.invoice_id,
+    i.invoice_amount,
+    i.due_date,
+    p.payment_date,
+    CAST(julianday(p.payment_date) - julianday(i.due_date) AS INTEGER) AS delay_days
+FROM
+    invoices i
+JOIN
+    customers c
+    ON i.customer_id = c.customer_id
+JOIN
+    payments p
+    ON i.invoice_id = p.invoice_id
+WHERE
+    c.customer_name = 'Kuladeep Reddy';""")
         
         print(data)
