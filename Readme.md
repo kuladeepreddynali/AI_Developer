@@ -101,7 +101,7 @@ SQL_DB_PATH=./enterprise_ai.db
 Required values:
 
 * `GROQ_API_KEY` — your Groq API key.
-* `GROQ_LLM_MODEL` — the Groq model name to use for generation, for example `groq/gpt-xxx`.
+* `GROQ_LLM_MODEL` — the Groq model name to use for generation, for example llama3-70b-8192 or mixtral-8x7b-32768.
 * `EMBED_MODEL` — the embedding model used for Chroma vector creation.
 * `CHROMA_DB_PATH` — local Chroma store path.
 * `SQL_DB_PATH` — path to the temporary SQLite database file.
